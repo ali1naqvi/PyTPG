@@ -232,10 +232,13 @@ class Trainer:
         if isinstance(actions, int):
             # all discrete actions
             self.actionCodes = range(actions)
+            #actioncodes = 18
             doReal = False
         else: # list of lengths of each action
             # some may be real actions
             self.actionCodes = range(len(actions))
+            #given: [0,0,0]
+            #actioncodes = range(0,3) 
             self.actionLengths = list(actions)
             doReal = True
 
@@ -248,7 +251,12 @@ class Trainer:
     def initializePopulations(self):
         for i in range(self.teamPopSize):
             # create 2 unique actions and learners
-            a1,a2 = random.sample(range(len(self.actionCodes)), 2)
+            if len(self.actionCodes) > 1:
+                # create 2 unique actions and learners (as before) when there are at least 2 action codes
+                a1, a2 = random.sample(range(len(self.actionCodes)), 2)
+            else:
+                # handle the case with only one action code
+                a1 = a2 = 0  # Assuming the single action code is at index 0
 
             l1 = Learner(self.mutateParams,
                         program=Program(maxProgramLength=self.initMaxProgSize,
