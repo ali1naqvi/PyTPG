@@ -152,7 +152,12 @@ class ActionObject:
                 print("Learner {} switching from Team {} to atomic action".format(learner_id, self.teamAction.id))
                 self.teamAction.inLearners.remove(str(learner_id))
 
-            self.actionCode = random.choice(options)
+            if not options:  # Check if the list is empty
+                # Handle the empty list case, e.g., set a default value or raise an error
+                self.actionCode = 0  # Replace defaultValue with an appropriate value
+            else:
+                self.actionCode = random.choice(options)
+
             self.teamAction = None
         else:
             # team action
@@ -176,7 +181,6 @@ class ActionObject:
         
         return self
             
-
     """
     Ensures proper functions are used in this class as set up by configurer.
     """
