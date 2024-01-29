@@ -166,15 +166,18 @@ class ConfActionObject:
             if self.actionCode is not None:
                 options = list(filter(lambda code: code != self.actionCode,mutateParams["actionCodes"]))
             else:
-                self.actionCode = 0
                 options = mutateParams["actionCodes"]
 
             # let our current team know we won't be pointing to them anymore
             if not self.isAtomic():
                 #print("Learner {} switching from Team {} to atomic action".format(learner_id, self.teamAction.id))
                 self.teamAction.inLearners.remove(str(learner_id))
-
-            self.actionCode = random.choice(options)
+                
+            if not options:  # Check if the list is empty
+                # Handle the empty list case, e.g., set a default value or raise an error
+                self.actionCode = 0  # Replace defaultValue with an appropriate value
+            else:
+                self.actionCode = random.choice(options)
             self.teamAction = None
         else:
             # team action
@@ -225,7 +228,12 @@ class ConfActionObject:
                 #print("Learner {} switching from Team {} to atomic action".format(learner_id, self.teamAction.id))
                 self.teamAction.inLearners.remove(str(learner_id))
 
-            self.actionCode = random.choice(options)
+            if not options:  # Check if the list is empty
+                # Handle the empty list case, e.g., set a default value or raise an error
+                self.actionCode = 0  # Replace defaultValue with an appropriate value
+            else:
+                self.actionCode = random.choice(options)
+                
             self.actionLength = mutateParams["actionLengths"][self.actionCode]
             self.teamAction = None
         else:
