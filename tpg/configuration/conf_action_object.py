@@ -166,6 +166,7 @@ class ConfActionObject:
             if self.actionCode is not None:
                 options = list(filter(lambda code: code != self.actionCode,mutateParams["actionCodes"]))
             else:
+                self.actionCode = 0
                 options = mutateParams["actionCodes"]
 
             # let our current team know we won't be pointing to them anymore
@@ -216,6 +217,7 @@ class ConfActionObject:
             if self.actionCode is not None:
                 options = list(filter(lambda code: code != self.actionCode, mutateParams["actionCodes"]))
             else:
+                self.actionCode = 0
                 options = mutateParams["actionCodes"]
 
             # let our current team know we won't be pointing to them anymore
