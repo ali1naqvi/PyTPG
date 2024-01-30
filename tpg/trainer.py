@@ -56,7 +56,7 @@ class Trainer:
     level. If true only mutates teams by changing up the learners, but doesn't
     mutate the learners or
     """
-    def __init__(self, actions, teamPopSize=360, rootBasedPop=True, gap=0.5,
+    def __init__(self, actions, data_size, teamPopSize=360, rootBasedPop=True, gap=0.5,
         inputSize=33600, nRegisters=8, initMaxTeamSize=5, initMaxProgSize=128, maxTeamSize=-1,
         pLrnDel=0.7, pLrnAdd=0.7, pLrnMut=0.3, pProgMut=0.66, pActMut=0.33,
         pActAtom=0.5, pInstDel=0.5, pInstAdd=0.5, pInstSwp=1.0, pInstMut=1.0,
@@ -64,6 +64,7 @@ class Trainer:
         operationSet="def", traversal="team", prevPops=None, mutatePrevs=True,
         initMaxActProgSize=64, nActRegisters=4):
 
+        self.data_size = data_size
         '''
         Validate inputs
         '''
@@ -318,14 +319,14 @@ class Trainer:
                         or any(task not in team.outcomes for task in skipTasks)]
 
         if len(sortTasks) == 0: # just get all
-            return [Agent(team, self.functionsDict, num=i, actVars=self.actVars)
+            return [Agent(team, self.functionsDict, self.data_size, num=i, actVars=self.actVars)
                     for i,team in enumerate(rTeams)]
         else:
 
             if len(sortTasks) == 1:
                 rTeams = [t for t in rTeams if sortTasks[0] in t.outcomes]
                 # return teams sorted by the outcome
-                return [Agent(team, self.functionsDict, num=i, actVars=self.actVars)
+                return [Agent(team, self.functionsDict, self.data_size, num=i, actVars=self.actVars)
                         for i,team in enumerate(sorted(rTeams,
                                         key=lambda tm: tm.outcomes[sortTasks[0]], reverse=True))]
 
@@ -333,7 +334,7 @@ class Trainer:
                 # apply scores/fitness to root teams
                 self.scoreIndividuals(sortTasks, multiTaskType=multiTaskType, doElites=False)
                 # return teams sorted by fitness
-                return [Agent(team, self.functionsDict, num=i, actVars=self.actVars)
+                return [Agent(team, self.functionsDict, self.data_size, num=i, actVars=self.actVars)
                         for i,team in enumerate(sorted(rTeams,
                                         key=lambda tm: tm.fitness, reverse=True))]
 
@@ -346,7 +347,7 @@ class Trainer:
 
         return Agent(max([tm for tm in teams],
                         key=lambda t: t.outcomes[task]),
-                     self.functionsDict, num=0, actVars=self.actVars)
+                     self.functionsDict, self.data_size, num=0, actVars=self.actVars)
 
     """
     Apply saved scores from list to the agents.
