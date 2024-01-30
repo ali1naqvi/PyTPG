@@ -1,7 +1,7 @@
 from tpg.program import Program
 import pickle
 from random import random
-import time
+import time, math, random
 
 """
 Simplified wrapper around a (root) team for easier interface for user.
@@ -11,13 +11,29 @@ class Agent:
     """
     Create an agent with a team.
     """
-    def __init__(self, team, functionsDict, num=1, actVars=None):
+    def __init__(self, team, functionsDict, data_size, num=1, actVars=None):
         self.team = team
         self.functionsDict = functionsDict
         self.agentNum = num
         self.actVars = actVars
+        self.window_size = self.rando_window_size(data_size)
 
-    """
+    def find_divisors(self, n):
+        divisors = set()
+        for i in range(1, int(math.sqrt(n)) + 1):
+            if n % i == 0:
+                divisors.add(i)
+                divisors.add(n // i)
+        return divisors
+
+    def rando_window_size(self, data_size):
+        # Find divisors of data_size
+        divisors = self.find_divisors(data_size)
+        self.window_size = random.choice(list(divisors))
+        return self.window_size
+        
+
+        """ 
     Gets an action from the root team of this agent / this agent.
     """
     def act(self, state, path_trace=None):
