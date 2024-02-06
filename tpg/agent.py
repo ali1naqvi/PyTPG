@@ -11,29 +11,22 @@ class Agent:
     """
     Create an agent with a team.
     """
-    def __init__(self, team, functionsDict, data_size, num=1, actVars=None):
+    def __init__(self, team, divisors, functionsDict, num=1, actVars=None):
         self.team = team
         self.functionsDict = functionsDict
         self.agentNum = num
         self.actVars = actVars
-        self.window_size = self.rando_window_size(data_size)
+        self.window_size = self.rando_window_size(divisors)
 
-    def find_divisors(self, n):
-        divisors = set()
-        for i in range(1, int(math.sqrt(n)) + 1):
-            if n % i == 0:
-                divisors.add(i)
-                divisors.add(n // i)
-        return divisors
 
-    def rando_window_size(self, data_size):
-        # Find divisors of data_size
-        divisors = self.find_divisors(data_size)
-        self.window_size = random.choice(list(divisors))
+    def rando_window_size(self, divisors):
+        window_size = random.choice(list(divisors))
+        return window_size
+    
+    def get_window(self):
         return self.window_size
-        
 
-        """ 
+    """ 
     Gets an action from the root team of this agent / this agent.
     """
     def act(self, state, path_trace=None):
