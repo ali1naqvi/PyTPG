@@ -7,7 +7,7 @@ from tpg.agent import Agent
 from tpg.configuration import configurer
 import random
 import numpy as np
-import pickle
+import pickle, math
 from collections import namedtuple
 import json
 
@@ -64,7 +64,7 @@ class Trainer:
         operationSet="def", traversal="team", prevPops=None, mutatePrevs=True,
         initMaxActProgSize=64, nActRegisters=4):
 
-        self.data_size = data_size
+        self.divisors = self.find_divisors(data_size)
         '''
         Validate inputs
         '''
@@ -210,6 +210,15 @@ class Trainer:
         #print(1/0)
 
         self.initializePopulations()
+        
+    def find_divisors(self, n):
+        divisors = set()
+        for i in range(1, int(math.sqrt(n)) + 1):
+            if n % i == 0:
+                divisors.add(i)
+                divisors.add(n // i)
+        divisors.discard(1)
+        return divisors
 
     '''
     Validation Method
@@ -256,8 +265,8 @@ class Trainer:
                 # create 2 unique actions and learners (as before) when there are at least 2 action codes
                 a1, a2 = random.sample(range(len(self.actionCodes)), 2)
             else:
-                # handle the case with only one action code
-                a1 = a2 = 0  # Assuming the single action code is at index 0
+                a1 = a2 = self.actionCodes[0]
+                print("a1 is: ", a1)
 
             l1 = Learner(self.mutateParams,
                         program=Program(maxProgramLength=self.initMaxProgSize,
@@ -319,14 +328,14 @@ class Trainer:
                         or any(task not in team.outcomes for task in skipTasks)]
 
         if len(sortTasks) == 0: # just get all
-            return [Agent(team, self.functionsDict, self.data_size, num=i, actVars=self.actVars)
+            return [Agent(team, self.divisors, self.functionsDict, num=i, actVars=self.actVars)
                     for i,team in enumerate(rTeams)]
         else:
 
             if len(sortTasks) == 1:
                 rTeams = [t for t in rTeams if sortTasks[0] in t.outcomes]
                 # return teams sorted by the outcome
-                return [Agent(team, self.functionsDict, self.data_size, num=i, actVars=self.actVars)
+                return [Agent(team,  self.divisors, self.functionsDict, num=i, actVars=self.actVars)
                         for i,team in enumerate(sorted(rTeams,
                                         key=lambda tm: tm.outcomes[sortTasks[0]], reverse=True))]
 
@@ -334,7 +343,7 @@ class Trainer:
                 # apply scores/fitness to root teams
                 self.scoreIndividuals(sortTasks, multiTaskType=multiTaskType, doElites=False)
                 # return teams sorted by fitness
-                return [Agent(team, self.functionsDict, self.data_size, num=i, actVars=self.actVars)
+                return [Agent(team,  self.divisors, self.functionsDict, num=i, actVars=self.actVars)
                         for i,team in enumerate(sorted(rTeams,
                                         key=lambda tm: tm.fitness, reverse=True))]
 
@@ -347,7 +356,7 @@ class Trainer:
 
         return Agent(max([tm for tm in teams],
                         key=lambda t: t.outcomes[task]),
-                     self.functionsDict, self.data_size, num=0, actVars=self.actVars)
+                      self.divisors, self.functionsDict, num=0, actVars=self.actVars)
 
     """
     Apply saved scores from list to the agents.
