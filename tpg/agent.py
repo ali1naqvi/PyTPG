@@ -16,7 +16,8 @@ class Agent:
         self.functionsDict = functionsDict
         self.agentNum = num
         self.actVars = actVars
-        self.window_size = self.rando_window_size(divisors)
+        if Agent.window_size is None:  # Only choose a window size if it hasn't been set
+            Agent.window_size = self.rando_window_size(divisors)
 
 
     def rando_window_size(self, divisors):
