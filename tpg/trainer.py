@@ -266,7 +266,6 @@ class Trainer:
                 a1, a2 = random.sample(range(len(self.actionCodes)), 2)
             else:
                 a1 = a2 = self.actionCodes[0]
-                print("a1 is: ", a1)
 
             l1 = Learner(self.mutateParams,
                         program=Program(maxProgramLength=self.initMaxProgSize,
