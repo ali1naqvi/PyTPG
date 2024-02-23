@@ -11,21 +11,11 @@ class Agent:
     """
     Create an agent with a team.
     """
-    def __init__(self, team, divisors, functionsDict, num=1, actVars=None):
+    def __init__(self, team, functionsDict, num=1, actVars=None):
         self.team = team
         self.functionsDict = functionsDict
         self.agentNum = num
         self.actVars = actVars
-        if Agent.window_size is None:  # Only choose a window size if it hasn't been set
-            Agent.window_size = self.rando_window_size(divisors)
-
-
-    def rando_window_size(self, divisors):
-        window_size = random.choice(list(divisors))
-        return window_size
-    
-    def get_window(self):
-        return self.window_size
 
     """ 
     Gets an action from the root team of this agent / this agent.
