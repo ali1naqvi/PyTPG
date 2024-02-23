@@ -339,14 +339,23 @@ class Trainer:
     """ 
     Gets the single best team at the given task, regardless of if its root or not.
     """
-    def getEliteAgent(self, task):
+    def getEliteAgent(self, task=None):
+        if task is None:
+            # If no task is given, consider all teams.
+            teams = self.teams
+        else:
+            teams = [t for t in self.teams if task in t.outcomes]
+
+        if not teams:
+            return None 
+
+        if task:
+            selected_team = max(teams, key=lambda t: t.outcomes[task])
+        else:
+            selected_team = max(teams, key=lambda t: sum(t.outcomes.values())) 
+
+        return Agent(selected_team, self.functionsDict, num=0, actVars=self.actVars)
         
-        teams = [t for t in self.teams if task in t.outcomes]
-
-        return Agent(max([tm for tm in teams],
-                        key=lambda t: t.outcomes[task]),
-                      self.functionsDict, num=0, actVars=self.actVars)
-
     """
     Apply saved scores from list to the agents.
     """
